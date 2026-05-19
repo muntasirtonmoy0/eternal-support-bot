@@ -1,14 +1,22 @@
-const {
-  Client,
-  GatewayIntentBits,
-  ChannelType,
-  PermissionsBitField,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder
-} = require('discord.js');
+const { Client, GatewayIntentBits } = require("discord.js");
+const express = require("express");
 
+const app = express();
+
+/* =========================
+   KEEP RENDER ALIVE
+========================= */
+app.get("/", (req, res) => {
+  res.send("Bot running");
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Web server running");
+});
+
+/* =========================
+   DISCORD CLIENT
+========================= */
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -17,138 +25,142 @@ const client = new Client({
   ]
 });
 
-client.once('ready', () => {
+/* =========================
+   READY
+========================= */
+client.once("ready", () => {
   console.log(`${client.user.tag} is online!`);
 });
 
 /* =========================
-   TICKET PANEL COMMAND
+   MESSAGE COMMANDS
 ========================= */
-client.on('messageCreate', async (message) => {
+client.on("messageCreate", async (message) => {
+
   if (message.author.bot) return;
 
-  if (message.content === '!panel') {
+  /* =========================
+     .PAY COMMAND
+  ========================= */
+  if (message.content === ".pay") {
 
-    const embed = new EmbedBuilder()
-      .setTitle('🎟️ Support Center')
-      .setDescription(
-        "**Welcome to the Official Support System**\n\n" +
-        "Click the button below to create a private ticket.\n\n" +
-        "🛠️ **You can use tickets for:**\n" +
-        "1. Technical support\n" +
-        "2. General question\n" +
-        "3. Payment and store help\n" +
-        "4. Report violations or appeal penalties\n\n" +
-        "⚡ Please avoid unnecessary tickets."
-      )
-      .setColor(0x2B2D31)
-      .setThumbnail(message.guild.iconURL())
-      .addFields(
-        { name: '📌 Status', value: 'Online', inline: true },
-        { name: '⏱️ Response Time', value: 'Under 10 minutes', inline: true },
-        { name: '👮 Staff', value: 'Available 24/7', inline: true }
-      )
-      .setFooter({
-        text: `${message.guild.name} • Ticket System`,
-        iconURL: message.guild.iconURL()
-      })
-      .setTimestamp();
-
-    const button = new ButtonBuilder()
-      .setCustomId('create_ticket')
-      .setLabel('Create Ticket')
-      .setStyle(ButtonStyle.Primary)
-      .setEmoji('🎫');
-
-    const row = new ActionRowBuilder().addComponents(button);
-
-    message.channel.send({
-      embeds: [embed],
-      components: [row]
-    });
+    return message.channel.send(
+      "💰 **Payment Methods (Eternal SMP)**\n\n" +
+      "📱 **Bkash 1 (Personal → Personal):** 01741644334\n" +
+      "📱 **Bkash 2 (Agent / Personal → Personal):** 01768166414\n\n" +
+      "🛒 Send screenshot in support ticket after payment!"
+    );
   }
+
+  /* =========================
+     .RULES COMMAND
+  ========================= */
+  if (message.content === ".rules") {
+
+    return message.channel.send(`
+# 📜 Eternal SMP — Official Server Rules
+
+━━━━━━━━━━━━━━
+
+## 💬 1. Chat Rules
+
+Keep the chat clean, friendly, and respectful. Toxicity, harassment, hate speech, discrimination, excessive swearing, spam, or inappropriate behavior is strictly prohibited.
+
+━━━━━━━━━━━━━━
+
+## 🎮 2. Fair Gameplay
+
+Using cheats, hacks, x-ray, auto-clickers, exploits, dupes, modified clients, or any unfair advantages is not allowed. Play fairly and respect the survival experience.
+
+━━━━━━━━━━━━━━
+
+## 🏡 3. Community & Server Balance
+
+Help keep the server enjoyable for everyone. Griefing, trolling, stealing, trapping players, intentionally ruining builds, or disturbing the community is not allowed.
+
+━━━━━━━━━━━━━━
+
+## 🚫 4. Banned Farms & Lag Machines
+
+Do not build farms, redstone machines, chunk loaders, or structures that may cause excessive lag or harm server performance. Staff may remove lag-causing builds without warning.
+
+━━━━━━━━━━━━━━
+
+## 📢 5. Proper Channel Usage
+
+Use channels correctly and avoid unnecessary spam, advertising, or disruptive behavior. Keep conversations meaningful and respectful.
+
+━━━━━━━━━━━━━━
+
+## 🎖️ 6. No Begging
+
+Do not beg for ranks, items, money, permissions, staff roles, or special treatment from staff or players.
+
+━━━━━━━━━━━━━━
+
+## 🛡️ 7. Follow Discord Guidelines
+
+All members must follow the official Discord Community Guidelines and Terms of Service at all times.
+
+━━━━━━━━━━━━━━
+
+## 🎤 8. Voice Chat Rules
+
+Keep VC conversations friendly and appropriate. Mic spam, earrape, excessive background noise, harassment, or disturbing others is not allowed.
+
+━━━━━━━━━━━━━━
+
+## 💸 9. No Real Money Trading
+
+Trading in-game items, accounts, or services for real money outside the official server store is strictly prohibited.
+
+━━━━━━━━━━━━━━
+
+## 🛒 10. Store & Rank Purchase Policy
+
+• All purchases made through the official server store are final.
+• Purchased ranks, kits, or items will be delivered after successful payment verification.
+• Sharing or abusing paid perks may result in punishment or removal of perks.
+• Chargebacks or fraudulent payments will result in a permanent blacklist from the server and store.
+
+━━━━━━━━━━━━━━
+
+## ❌ 11. Refund Policy
+
+• No refunds will be given after ranks, items, or perks are delivered.
+• Accidental purchases are the buyer’s responsibility.
+• Breaking server rules after purchasing does NOT make you eligible for a refund.
+• If you experience delivery issues, contact staff with valid proof.
+
+━━━━━━━━━━━━━━
+
+## ⚖️ 12. Punishment System
+
+Punishments depend on the severity of the rule broken:
+
+• Warning
+• Mute
+• Kick
+• Temporary Ban
+• Permanent Ban
+
+Severe violations such as hacking, duping, scamming, or chargebacks may result in immediate permanent punishment without warning.
+
+━━━━━━━━━━━━━━
+
+## 🧠 13. Use Common Sense
+
+Not every situation can be covered by rules. Use common sense and respect staff decisions to help maintain a positive and fair community.
+
+━━━━━━━━━━━━━━
+
+🌟 Welcome to Eternal SMP — survive, build, and enjoy together! 🌟
+`);
+  }
+
 });
 
 /* =========================
-   BUTTON INTERACTIONS
+   LOGIN
 ========================= */
-client.on('interactionCreate', async (interaction) => {
-
-  if (!interaction.isButton()) return;
-
-  /* CREATE TICKET */
-  if (interaction.customId === 'create_ticket') {
-
-    const channel = await interaction.guild.channels.create({
-      name: `ticket-${interaction.user.username}`,
-      type: ChannelType.GuildText,
-
-      permissionOverwrites: [
-        {
-          id: interaction.guild.id,
-          deny: [PermissionsBitField.Flags.ViewChannel],
-        },
-        {
-          id: interaction.user.id,
-          allow: [
-            PermissionsBitField.Flags.ViewChannel,
-            PermissionsBitField.Flags.SendMessages,
-            PermissionsBitField.Flags.ReadMessageHistory
-          ],
-        },
-        {
-          id: interaction.client.user.id,
-          allow: [
-            PermissionsBitField.Flags.ViewChannel,
-            PermissionsBitField.Flags.SendMessages,
-            PermissionsBitField.Flags.ManageChannels
-          ],
-        }
-      ],
-    });
-
-    const ticketEmbed = new EmbedBuilder()
-      .setTitle('🎫 Ticket Created')
-      .setDescription(
-        `Hello ${interaction.user}, support will assist you shortly.\n\n` +
-        `Please describe your issue clearly so staff can help you faster.`
-      )
-      .setColor(0x57F287)
-      .setTimestamp();
-
-    const closeButton = new ButtonBuilder()
-      .setCustomId('close_ticket')
-      .setLabel('Close Ticket')
-      .setStyle(ButtonStyle.Danger)
-      .setEmoji('🔒');
-
-    const row = new ActionRowBuilder().addComponents(closeButton);
-
-    channel.send({
-      embeds: [ticketEmbed],
-      components: [row]
-    });
-
-    await interaction.reply({
-      content: `✅ Ticket created: ${channel}`,
-      ephemeral: true
-    });
-  }
-
-  /* CLOSE TICKET */
-  if (interaction.customId === 'close_ticket') {
-
-    const channel = interaction.channel;
-
-    await interaction.reply({
-      content: '🔒 Closing ticket...',
-      ephemeral: true
-    });
-
-    setTimeout(() => {
-      channel.delete().catch(() => {});
-    }, 3000);
-  }
-});
-
 client.login(process.env.DISCORD_TOKEN);
